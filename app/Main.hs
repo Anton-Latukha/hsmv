@@ -16,6 +16,7 @@ import           Options.Applicative.Simple
 import           System.Directory
 import           System.FilePath
 import           System.IO
+import           UnliftIO.Async
 
 --------------------------------------------------------------------------------
 -- Main entry point
@@ -49,7 +50,7 @@ main = do
          (long "dry-run" <>
           help "Don't make changes, just print what would be done."))
       empty
-  mapM_ (rename config) (configModules config)
+  pooledMapConcurrently_ (rename config) (configModules config)
   unless
     (configDryRun config)
     (do exists <- doesFileExist (configFromPath config)
@@ -57,7 +58,7 @@ main = do
           then do
             createDirectoryIfMissing
               True
-              (takeDirectory (configFromPath config))
+              (takeDirectory (configToPath config))
             renameFile (configFromPath config) (configToPath config)
           else hPutStrLn
                  stderr
