@@ -28,3 +28,10 @@ project, it would be:
 
 You can use `--dry-run` to see what would be changed in all the files
 before running it.
+
+## Scope and limitations
+
+* Renames headers `module X ...`
+* Renames imports `import .. X`
+* **Does not** rename qualified expressions `X.sort`, for
+  example. May in the future.
