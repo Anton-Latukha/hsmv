@@ -19,8 +19,8 @@ import           Text.Regex.Applicative.Text
 applyToContents :: Text -> Text -> Text -> Text
 applyToContents from to = replace (inImport mname) . replace inHeader
   where
-    inHeader = line <> string "module" <> spaces1 <> mname <> spaces1
-    mname = string from *> pure to
+    inHeader = line <> string "module" <> spaces1 <> mname
+    mname = string from *> (pure to <> spaces1)
 
 spaces1 :: RE Char Text
 spaces1 = capture (some (psym isSpace))
