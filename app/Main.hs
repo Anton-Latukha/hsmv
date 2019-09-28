@@ -14,6 +14,7 @@ import qualified Data.Text.IO as T
 import           Hsmv
 import           Options.Applicative.Simple
 import           System.Directory
+import           System.FilePath
 import           System.IO
 
 --------------------------------------------------------------------------------
@@ -53,8 +54,14 @@ main = do
     (configDryRun config)
     (do exists <- doesFileExist (configFromPath config)
         if exists
-           then renameFile (configFromPath config) (configToPath config)
-           else hPutStrLn stderr ("Warning: File does not exist: " ++ configFromPath config))
+          then do
+            createDirectoryIfMissing
+              True
+              (takeDirectory (configFromPath config))
+            renameFile (configFromPath config) (configToPath config)
+          else hPutStrLn
+                 stderr
+                 ("Warning: File does not exist: " ++ configFromPath config))
 
 --------------------------------------------------------------------------------
 -- Commands
