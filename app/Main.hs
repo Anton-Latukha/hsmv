@@ -29,6 +29,7 @@ data Config =
     , configToPath :: FilePath
     , configModules :: [FilePath]
     , configDryRun :: !Bool
+    , configAutoQualify :: !Bool
     } deriving (Show)
 
 main :: IO ()
@@ -48,7 +49,12 @@ main = do
          False
          True
          (long "dry-run" <>
-          help "Don't make changes, just print what would be done."))
+          help "Don't make changes, just print what would be done.") <*>
+       flag
+         True
+         False
+         (long "no-auto-qualify" <>
+          help "Disable auto-qualify"))
       empty
   pooledMapConcurrently_ (rename config) (configModules config)
   unless
@@ -56,9 +62,7 @@ main = do
     (do exists <- doesFileExist (configFromPath config)
         if exists
           then do
-            createDirectoryIfMissing
-              True
-              (takeDirectory (configToPath config))
+            createDirectoryIfMissing True (takeDirectory (configToPath config))
             renameFile (configFromPath config) (configToPath config)
           else hPutStrLn
                  stderr
@@ -72,7 +76,16 @@ rename config path = do
   contents <- T.readFile path
   if configDryRun config
     then T.putStrLn
-           (applyToContents (configFrom config) (configTo config) contents)
-    else do T.writeFile
-              path
-              (applyToContents (configFrom config) (configTo config) contents)
+           (applyToContents
+              (configAutoQualify config)
+              (configFrom config)
+              (configTo config)
+              contents)
+    else do
+      T.writeFile
+        path
+        (applyToContents
+           (configAutoQualify config)
+           (configFrom config)
+           (configTo config)
+           contents)
