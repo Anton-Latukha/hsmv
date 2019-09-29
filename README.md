@@ -40,3 +40,15 @@ feature via `--no-auto-qualify`.
 * Renames imports `import .. X`
 * **Does not** rename qualified expressions `X.sort`, for
   example. May in the future.
+
+Note:
+
+Use one of these to implement anchored `replace`:
+
+``` haskell
+findFirstPrefix :: RE' a -> Text -> Maybe (a, Text)
+findLongestPrefix :: RE' a -> Text -> Maybe (a, Text)
+findShortestPrefix :: RE' a -> Text -> Maybe (a, Text)
+```
+
+Currently the match is an infix match, which is a bug.
