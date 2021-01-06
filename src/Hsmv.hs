@@ -73,10 +73,10 @@ inImport autoQualify from mname =
 capture :: RE' a -> RE Char Text
 capture = fmap snd . withMatched
 
+#if !MIN_VERSION_regex_applicative(0,3,4)
 --------------------------------------------------------------------------------
 -- Orphan instances
 
-#ifdef MIN_VERSION_regex-applicative
 instance Semigroup (RE' Text) where
   (<>) x y = (<>) <$> x <*> y
 #endif
