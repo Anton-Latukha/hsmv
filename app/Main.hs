@@ -11,7 +11,6 @@ import           Control.Monad
 #if !MIN_VERSION_base(4,9,0)
 import           Data.Semigroup ((<>))
 #endif
-import           Data.Text (Text)
 import qualified Data.Text as T
 import qualified Data.Text.IO as T
 import           Hsmv
@@ -26,13 +25,13 @@ import           UnliftIO.Async
 
 data Config =
   Config
-    { configFrom :: Text
-    , configTo :: Text
+    { configFrom :: ModuleName
+    , configTo :: ModuleName
     , configFromPath :: FilePath
     , configToPath :: FilePath
     , configModules :: [FilePath]
-    , configDryRun :: !Bool
-    , configAutoQualify :: !Bool
+    , configDryRun :: !DryRunFlag
+    , configAutoQualify :: !AutoQualifyFlag
     } deriving (Show)
 
 main :: IO ()
